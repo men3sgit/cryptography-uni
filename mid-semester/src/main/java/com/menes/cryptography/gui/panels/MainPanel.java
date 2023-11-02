@@ -1,11 +1,10 @@
-package com.menes.cryptography.gui;
+package com.menes.cryptography.gui.panels;
 
 import com.menes.cryptography.utils.Common;
 import com.menes.cryptography.utils.MarginFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class MainPanel extends JPanel {
     private ScreenPanel screenPanel;

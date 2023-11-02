@@ -1,4 +1,4 @@
-package com.menes.cryptography.gui;
+package com.menes.cryptography.gui.panels;
 
 import com.menes.cryptography.utils.Common;
 import com.menes.cryptography.utils.MarginFactory;

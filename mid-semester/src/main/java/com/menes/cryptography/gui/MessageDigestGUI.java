@@ -10,7 +10,7 @@ public class MessageDigestGUI implements AlgorithmGUI {
     JComboBox<String> hashes;
     JTextArea input, result;
 
-    MessageDigestGUI(JTextArea input, JTextArea result) {
+    public MessageDigestGUI(JTextArea input, JTextArea result) {
         this.input = input;
         this.result = result;
         hashes = new JComboBox<>(new String[]{"SHA-1", "SHA-256", "SHA-512", "MD5", "RIPEMD-160"});
