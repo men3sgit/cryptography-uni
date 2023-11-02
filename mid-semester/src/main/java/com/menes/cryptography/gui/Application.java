@@ -1,7 +1,8 @@
 package com.menes.cryptography.gui;
 
+import com.menes.cryptography.gui.panels.MainPanel;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class Application extends JFrame {
     public Application() {

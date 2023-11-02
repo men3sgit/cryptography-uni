@@ -1,10 +1,13 @@
 package com.menes.cryptography.algorithms;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 public class HMAC {
@@ -30,5 +33,12 @@ public class HMAC {
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+    public String getKeyString() throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+        SecureRandom random = new SecureRandom();
+        keyGenerator.init(random);
+        SecretKey secretKey = keyGenerator.generateKey();
+        return this.secretKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 }

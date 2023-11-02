@@ -1,5 +1,9 @@
-package com.menes.cryptography.gui;
+package com.menes.cryptography.gui.panels;
 
+import com.menes.cryptography.gui.AlgorithmGUI;
+import com.menes.cryptography.gui.HMACGUI;
+import com.menes.cryptography.gui.MessageDigestGUI;
+import com.menes.cryptography.gui.SymmetricEncryptionGUI;
 import com.menes.cryptography.utils.Common;
 import com.menes.cryptography.utils.MarginFactory;
 
@@ -60,7 +64,7 @@ public class ScreenPanel extends JPanel {
         algoPanel.removeAll();
         revalidate();
         if (algo.equalsIgnoreCase("Message Digest")) {
-            algorithmGUI = new HMACGUI(input, result);
+            algorithmGUI = new MessageDigestGUI(input, result);
 
         } else if (algo.equalsIgnoreCase("HMAC")) {
             algorithmGUI = new HMACGUI(input, result);
