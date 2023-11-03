@@ -36,6 +36,7 @@ public class RightTitlePanel extends JPanel {
         titlePanels.add(new JLabel("Block Ciphers"));
         titlePanels.add(new JLabel("Stream Ciphers"));
         titlePanels.add(new JLabel("Electronic Signature"));
+        titlePanels.add(new JLabel("RSA"));
 
         titlePanels.forEach(label -> {
             label.addMouseListener(new MouseAdapter() {

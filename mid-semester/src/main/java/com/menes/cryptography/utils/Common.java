@@ -32,8 +32,8 @@ public class Common {
     }
 
     public interface Unit {
-        int MAIN_HEIGHT = 500;
-        int MAIN_WIDTH = 800;
+        int MAIN_HEIGHT = 640;
+        int MAIN_WIDTH = 1000;
         int INPUT_HEIGHT = 300;
         int INPUT_WIDTH = 400;
         int INPUT_TEXT_SIZE = 16;
