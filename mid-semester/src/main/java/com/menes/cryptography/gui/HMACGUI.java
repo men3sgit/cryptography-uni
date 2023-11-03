@@ -57,29 +57,23 @@ public class HMACGUI implements AlgorithmGUI {
     }
     public static void main(String[] args) {
         try {
-            // Generate a random secret key
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             SecureRandom random = new SecureRandom();
             keyGenerator.init(random);
             SecretKey secretKey = keyGenerator.generateKey();
 
-            // Convert the secret key to a byte array
             byte[] keyBytes = secretKey.getEncoded();
 
-            // Create a Mac instance with the HmacSHA256 algorithm
             Mac mac = Mac.getInstance("HmacSHA256");
 
-            // Initialize the Mac with the secret key
             SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "HmacSHA256");
             mac.init(secretKeySpec);
 
-            // Provide the message you want to calculate the HMAC for
             String message = "This is the message for which we want to calculate the HMAC";
 
             // Calculate the HMAC
             byte[] hmacBytes = mac.doFinal(message.getBytes());
 
-            // Convert the HMAC to a hexadecimal string for easy representation
             StringBuilder hmacHex = new StringBuilder();
             for (byte b : hmacBytes) {
                 hmacHex.append(String.format("%02x", b));

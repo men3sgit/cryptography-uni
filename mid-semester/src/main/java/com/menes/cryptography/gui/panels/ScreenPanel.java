@@ -1,9 +1,6 @@
 package com.menes.cryptography.gui.panels;
 
-import com.menes.cryptography.gui.AlgorithmGUI;
-import com.menes.cryptography.gui.HMACGUI;
-import com.menes.cryptography.gui.MessageDigestGUI;
-import com.menes.cryptography.gui.SymmetricEncryptionGUI;
+import com.menes.cryptography.gui.*;
 import com.menes.cryptography.utils.Common;
 import com.menes.cryptography.utils.MarginFactory;
 
@@ -13,12 +10,12 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+
+import static com.menes.cryptography.gui.GUIUtils.focusTextArea;
 
 public class ScreenPanel extends JPanel {
     private JLabel title = new JLabel("Message Digest");
@@ -42,7 +39,7 @@ public class ScreenPanel extends JPanel {
         renderTitle();
         add(MarginFactory.marginTop(10));
         renderAlgorithm();
-        add(MarginFactory.marginTop(10));
+        add(MarginFactory.marginTop(50));
         renderInput();
         add(MarginFactory.marginTop(10));
         renderClearButton();
@@ -68,6 +65,8 @@ public class ScreenPanel extends JPanel {
 
         } else if (algo.equalsIgnoreCase("HMAC")) {
             algorithmGUI = new HMACGUI(input, result);
+        } else if (algo.equalsIgnoreCase("RSA")) {
+            algorithmGUI = new RSAGUI(input, result);
         } else {
             algorithmGUI = new SymmetricEncryptionGUI();
         }
@@ -120,26 +119,10 @@ public class ScreenPanel extends JPanel {
 
             }
         });
-
         focusTextArea(input, "Input");
-    }
-
-
-    private void focusTextArea(JTextArea input, String title) {
-        input.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                input.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 3), title));
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                input.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 1), title));
-            }
-        });
-
         add(input);
     }
+
 
     private void renderResult() {
         result.setPreferredSize(new Dimension(Common.Unit.INPUT_WIDTH, Common.Unit.INPUT_HEIGHT));
@@ -149,6 +132,7 @@ public class ScreenPanel extends JPanel {
         result.setFont(new Font("Monospaced", Font.TRUETYPE_FONT, Common.Unit.INPUT_TEXT_SIZE));
 
         focusTextArea(result, "Result");
+        add(result);
     }
 
     MouseListener mouseListener = new MouseListener() {

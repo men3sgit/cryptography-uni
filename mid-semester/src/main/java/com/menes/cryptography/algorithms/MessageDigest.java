@@ -18,7 +18,6 @@ public class MessageDigest {
             byte[] outputData = new byte[ripemd160Digest.getDigestSize()];
             ripemd160Digest.doFinal(outputData, 0);
 
-
             return Hex.toHexString(outputData);
         }
         java.security.MessageDigest digest = java.security.MessageDigest.getInstance(algo);
