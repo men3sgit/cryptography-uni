@@ -21,7 +21,7 @@ public class ScreenPanel extends JPanel {
     private JLabel title = new JLabel("Message Digest");
     private JTextArea input = new JTextArea(), result = new JTextArea();
     private AlgorithmGUI algorithmGUI;
-    private JButton copyBtn, clearBtn;
+    private JButton copyBtn, clearBtn = new JButton("Clear"),encryptBtn= new JButton("Encrypt"),decryptBtn= new JButton("Decrypt");
     private JPanel algoPanel;
 
 
@@ -42,7 +42,7 @@ public class ScreenPanel extends JPanel {
         add(MarginFactory.marginTop(50));
         renderInput();
         add(MarginFactory.marginTop(10));
-        renderClearButton();
+        renderButtons();
         add(MarginFactory.marginTop(10));
         renderResult();
         add(MarginFactory.marginTop(20));
@@ -58,11 +58,13 @@ public class ScreenPanel extends JPanel {
     }
 
     public void renderAlgorithmGUI(String algo) {
+        clearData();
+        displayButton(Boolean.TRUE);
         algoPanel.removeAll();
         revalidate();
         if (algo.equalsIgnoreCase("Message Digest")) {
             algorithmGUI = new MessageDigestGUI(input, result);
-
+            displayButton(Boolean.FALSE);
         } else if (algo.equalsIgnoreCase("HMAC")) {
             algorithmGUI = new HMACGUI(input, result);
         } else if (algo.equalsIgnoreCase("RSA")) {
@@ -72,6 +74,11 @@ public class ScreenPanel extends JPanel {
         }
         algoPanel.add((algorithmGUI.renderGUI()));
         revalidate();
+    }
+
+    private void clearData() {
+        input.setText("");
+        result.setText("");
     }
 
     private void renderTitle() {
@@ -87,7 +94,6 @@ public class ScreenPanel extends JPanel {
         titlePanel.add(title);
         add(titlePanel);
     }
-
     private void renderInput() {
         input.setPreferredSize(new Dimension(Common.Unit.INPUT_WIDTH, Common.Unit.INPUT_HEIGHT));
         input.setFont(new Font("Courier", Font.PLAIN, Common.Unit.INPUT_TEXT_SIZE));
@@ -188,18 +194,26 @@ public class ScreenPanel extends JPanel {
         add(panel);
     }
 
-    private void renderClearButton() {
+    private void renderButtons() {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        clearBtn = new JButton("Clear");
-        clearBtn.setBackground(Common.Color.THEME);
-        clearBtn.setPreferredSize(new Dimension(70, 40));
-        clearBtn.setForeground(Color.WHITE);
-        clearBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        clearBtn.setFocusable(false);
-        clearBtn.addMouseListener(mouseListener);
-        panel.add(clearBtn);
+        initButton(encryptBtn,panel);
+        initButton(decryptBtn,panel);
+        initButton(clearBtn,panel);
         add(panel);
+    }
+    private void displayButton(boolean flag){
+        encryptBtn.setVisible(flag);
+        decryptBtn.setVisible(flag);
+    }
+    private void initButton(JButton button,JPanel panel){
+        button.setBackground(Common.Color.THEME);
+        button.setPreferredSize(new Dimension(90, 40));
+        button.setForeground(Color.WHITE);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setFocusable(false);
+        button.addMouseListener(mouseListener);
+        panel.add(button);
     }
 
     public void copyToClipboard(String text) {
