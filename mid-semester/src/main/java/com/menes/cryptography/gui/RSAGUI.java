@@ -4,7 +4,6 @@ import com.menes.cryptography.utils.Common;
 import com.menes.cryptography.utils.MarginFactory;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -15,7 +14,7 @@ public class RSAGUI implements AlgorithmGUI {
     private JComboBox<Integer> keySizeOption = new JComboBox<>(new Integer[]{1024, 2048, 4096});
     private JButton generateKeyButton;
     JScrollPane privateScrollPane, publicJScrollPane;
-    private JTextArea privateKey = new JTextArea(12, 30), publicKey = new JTextArea(12, 30);
+    private JTextArea privateKey = new JTextArea(5, 30), publicKey = new JTextArea(5, 30);
 
     public RSAGUI(JTextArea input, JTextArea result) {
     }
@@ -23,7 +22,8 @@ public class RSAGUI implements AlgorithmGUI {
     @Override
     public JPanel renderGUI() {
         JPanel main = new JPanel();
-        main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
+        main.setPreferredSize(new Dimension(700,600));
+        main.setLayout(new FlowLayout(FlowLayout.LEFT));
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout(FlowLayout.LEFT));
         buttons.add(getGenerateKeyPairPanel());
@@ -39,7 +39,6 @@ public class RSAGUI implements AlgorithmGUI {
         panel.add(getPrivateKeyPanel());
         panel.add(MarginFactory.marginRight(20));
         panel.add(getPublicKeyPanel());
-        panel.add(MarginFactory.marginBottom(50));
         return panel;
     }
 
@@ -82,6 +81,7 @@ public class RSAGUI implements AlgorithmGUI {
         generateKeyButton.addActionListener(action -> {
         });
         generateKeyButton.setForeground(Color.WHITE);
+        generateKeyButton.setBorder(BorderFactory.createLineBorder(Color.GRAY,3));
         generateKeyButton.setBackground(Common.Color.THEME);
         generateKeyButton.setPreferredSize(new Dimension(300, 30));
         generateKeyButton.setFocusable(false);

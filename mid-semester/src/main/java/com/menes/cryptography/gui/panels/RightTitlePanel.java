@@ -46,6 +46,7 @@ public class RightTitlePanel extends JPanel {
                     label.setBackground(Common.Color.THEME);
                     label.setForeground(Color.WHITE);
                     screenPanel.renderAlgorithmGUI(label.getText());
+
                 }
 
                 @Override
