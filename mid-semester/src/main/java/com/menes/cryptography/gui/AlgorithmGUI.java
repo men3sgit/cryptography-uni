@@ -6,6 +6,6 @@ import java.security.NoSuchAlgorithmException;
 
 public interface AlgorithmGUI {
     JPanel renderGUI();
-    void doCipher() throws NoSuchAlgorithmException, InvalidKeyException;
+    void doCipher() throws Exception;
 
 }

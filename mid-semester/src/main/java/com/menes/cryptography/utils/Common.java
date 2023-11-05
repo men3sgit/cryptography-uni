@@ -3,10 +3,11 @@ package com.menes.cryptography.utils;
 import java.awt.*;
 
 public class Common {
-    public interface Cursor{
+    public interface Cursor {
         java.awt.Cursor HAND_CURSOR = new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR);
     }
-  public  interface Title {
+
+    public interface Title {
         String BLOCK_CIPHERS = "Block ciphers (Symmetric)";
         String HMAC = "Hashing Message Authentication Code";
         String MESSAGE_DIGEST = "Message Digest - Hash functions";
@@ -23,17 +24,16 @@ public class Common {
         String ZERO = "ZeroPadding";
     }
 
-   public  interface Mode {
-        String OBF = "OBF";
-        String CBC = "CBC";
-        String ECB = "ECB";
-        String CFB = "CFB";
-        String CTR = "CTR";
+    public interface Mode {
+        int ECB = 0;
+        int CFB = 1;
+        int OFB = 2;
+        int CBC = 3;
     }
 
     public interface Unit {
         int MAIN_HEIGHT = 640;
-        int MAIN_WIDTH = 1000;
+        int MAIN_WIDTH = 960;
         int INPUT_HEIGHT = 300;
         int INPUT_WIDTH = 400;
         int INPUT_TEXT_SIZE = 16;

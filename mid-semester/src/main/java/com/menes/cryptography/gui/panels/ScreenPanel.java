@@ -21,7 +21,7 @@ public class ScreenPanel extends JPanel {
     private JLabel title = new JLabel("Message Digest");
     private JTextArea input = new JTextArea(), result = new JTextArea();
     private AlgorithmGUI algorithmGUI;
-    private JButton copyBtn, clearBtn = new JButton("Clear"),encryptBtn= new JButton("Encrypt"),decryptBtn= new JButton("Decrypt");
+    private JButton copyBtn, clearBtn = new JButton("Clear"), encryptBtn = new JButton("Encrypt"), decryptBtn = new JButton("Decrypt");
     private JPanel algoPanel;
 
 
@@ -58,6 +58,7 @@ public class ScreenPanel extends JPanel {
     }
 
     public void renderAlgorithmGUI(String algo) {
+        title.setText(algo);
         clearData();
         displayButton(Boolean.TRUE);
         algoPanel.removeAll();
@@ -70,7 +71,7 @@ public class ScreenPanel extends JPanel {
         } else if (algo.equalsIgnoreCase("RSA")) {
             algorithmGUI = new RSAGUI(input, result);
         } else {
-            algorithmGUI = new SymmetricEncryptionGUI();
+            algorithmGUI = new SymmetricEncryptionGUI(input, result);
         }
         algoPanel.add((algorithmGUI.renderGUI()));
         revalidate();
@@ -94,6 +95,7 @@ public class ScreenPanel extends JPanel {
         titlePanel.add(title);
         add(titlePanel);
     }
+
     private void renderInput() {
         input.setPreferredSize(new Dimension(Common.Unit.INPUT_WIDTH, Common.Unit.INPUT_HEIGHT));
         input.setFont(new Font("Courier", Font.PLAIN, Common.Unit.INPUT_TEXT_SIZE));
@@ -104,10 +106,11 @@ public class ScreenPanel extends JPanel {
             public void insertUpdate(DocumentEvent e) {
                 copyBtn.setVisible(true);
                 try {
-                    algorithmGUI.doCipher();
+                    if (title.getText().equalsIgnoreCase("Message Digest"))
+                        algorithmGUI.doCipher();
                 } catch (NoSuchAlgorithmException ex) {
                     result.setText("No support");
-                } catch (InvalidKeyException ex) {
+                } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -150,6 +153,12 @@ public class ScreenPanel extends JPanel {
             } else if (e.getSource() == clearBtn) {
                 input.setText("");
                 result.setText("");
+            } else if (e.getSource() == encryptBtn) {
+                try {
+                    algorithmGUI.doCipher();
+                } catch (Exception ex) {
+                    result.setText(ex.getMessage()+"\nSecret key (16, 24, or 32 characters)");
+                }
             }
         }
 
@@ -197,16 +206,18 @@ public class ScreenPanel extends JPanel {
     private void renderButtons() {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        initButton(encryptBtn,panel);
-        initButton(decryptBtn,panel);
-        initButton(clearBtn,panel);
+        initButton(encryptBtn, panel);
+        initButton(decryptBtn, panel);
+        initButton(clearBtn, panel);
         add(panel);
     }
-    private void displayButton(boolean flag){
+
+    private void displayButton(boolean flag) {
         encryptBtn.setVisible(flag);
         decryptBtn.setVisible(flag);
     }
-    private void initButton(JButton button,JPanel panel){
+
+    private void initButton(JButton button, JPanel panel) {
         button.setBackground(Common.Color.THEME);
         button.setPreferredSize(new Dimension(90, 40));
         button.setForeground(Color.WHITE);
