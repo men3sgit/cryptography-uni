@@ -22,7 +22,7 @@ public class RSAGUI implements AlgorithmGUI {
     @Override
     public JPanel renderGUI() {
         JPanel main = new JPanel();
-        main.setPreferredSize(new Dimension(700,600));
+        main.setPreferredSize(new Dimension(700,400));
         main.setLayout(new FlowLayout(FlowLayout.LEFT));
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout(FlowLayout.LEFT));

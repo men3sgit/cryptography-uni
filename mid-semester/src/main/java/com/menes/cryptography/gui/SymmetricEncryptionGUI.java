@@ -1,57 +1,79 @@
 package com.menes.cryptography.gui;
 
 import com.menes.cryptography.algorithms.DES;
+import com.menes.cryptography.algorithms.SymmetricCipher;
 import com.menes.cryptography.utils.Common;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.*;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class SymmetricEncryptionGUI implements AlgorithmGUI {
-    JTextField keyInput = new JTextField();
+    JPanel main;
+    JTextField keyInput = new JTextField(), ivInput = new JTextField();
     JComboBox<?> algorithmOption;
     JComboBox<?> modeOption;
+    JComboBox<?> paddingOption;
     JComboBox<Object> bitOption;
-    DES des = new DES();
+    JTextArea input, result;
 
-    public SymmetricEncryptionGUI() {
+
+    public SymmetricEncryptionGUI(JTextArea input, JTextArea result) {
+        this.input = input;
+        this.result = result;
     }
 
     @Override
     public JPanel renderGUI() {
-        JPanel main = new JPanel();
+        main = new JPanel();
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
-        main.add(getSelectCipher("DES"));
-        main.add(getSelectMode("OCF"));
+        main.add(getSelectCipher());
+        main.add(getSelectMode());
         main.add(getKeyAndBitSelection());
         main.add(getKeyInput());
+        main.add(getIVPanel());
+        displayIV();
         return main;
 
     }
 
     @Override
-    public void doCipher() throws NoSuchAlgorithmException {
-
+    public void doCipher() throws Exception {
+        if (input.getText().isBlank()) return;
+        String transform = String.format("%s/%s/%s", algorithmOption.getSelectedItem(), formatCurrentMode(), paddingOption.getSelectedItem());
+        SymmetricCipher cipher = new SymmetricCipher(transform);
+        result.setText(cipher.encrypt(input.getText(), getSecretKey(),ivInput.getText()));
     }
 
-    private JPanel getSelectMode(String mode) {
+    private SecretKey getSecretKey() throws NoSuchAlgorithmException {
+        return new SecretKeySpec(keyInput.getText().getBytes(StandardCharsets.UTF_8), algorithmOption.getSelectedItem().toString());
+    }
+
+    private JPanel getSelectMode() {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(new JLabel("Select mode"));
-        panel.add(new JComboBox<>(Arrays.stream(new String[]{"Electronic Codebook (ECB)"}).sorted().toArray()));
-
+        panel.add(modeOption = new JComboBox<>(new String[]{"Electronic Codebook (ECB)", "Cipher feedback (CFB)", "Output feedback (OFB)", "Cipher Block Chaining (CBC)"}));
+        modeOption.addActionListener(action -> {
+            displayIV();
+        });
+        panel.add(getPaddingOption());
         return panel;
     }
 
-    private JPanel getSelectCipher(String cipher) {
+    private JPanel getSelectCipher() {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(new JLabel("Select block cipher name"));
         algorithmOption = new JComboBox<>(Arrays.stream(new String[]{"Triple DES", "DES", "HILL", "Vigenere", "AES", "RC4"}).sorted().toArray());
         algorithmOption.addActionListener(e -> {
             generateBitOption();
-            System.out.println("a");
         });
         panel.add(algorithmOption);
 
@@ -67,7 +89,11 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         generateBtn.setBackground(Common.Color.THEME);
         generateBtn.setFocusable(false);
         generateBtn.addActionListener(action -> {
-            keyInput.setText(des.generateKey());
+            try {
+                keyInput.setText(getGenerateKeyString());
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
         });
         generateBtn.setFocusable(false);
         generateBtn.setCursor(Common.Cursor.HAND_CURSOR);
@@ -79,9 +105,27 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         return panel;
     }
 
+    private String getGenerateKeyString() throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithmOption.getSelectedItem().toString());
+        keyGenerator.init((Integer) bitOption.getSelectedItem());
+        return Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
+    }
+
+    private String formatCurrentMode() {
+        return switch (modeOption.getSelectedIndex()) {
+            case 1 -> "CFB";
+            case 2 -> "OFB";
+            case 3 -> "CBC";
+            default -> "ECB";
+        };
+    }
+
     private void generateBitOption() {
-        if (algorithmOption.getSelectedItem().toString().equalsIgnoreCase("DES")) {
+        String algo = algorithmOption.getSelectedItem().toString();
+        if (algo.equalsIgnoreCase("DES")) {
             updateItems(new Integer[]{56});
+        } else if (algo.equalsIgnoreCase("Triple DES")) {
+            updateItems(new Integer[]{192, 256});
         } else {
             updateItems(new Integer[]{128, 192, 256});
         }
@@ -99,10 +143,37 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+        keyInput.setPreferredSize(new Dimension(400, 40));
         keyInput.setBorder(BorderFactory.createTitledBorder("Key"));
-        keyInput.setPreferredSize(new Dimension(Common.Unit.MAIN_WIDTH, 36));
+        GUIUtils.focusTextArea(keyInput, "Key");
         panel.add(keyInput);
 
         return panel;
+    }
+
+    private JPanel getPaddingOption() {
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Padding "));
+        paddingOption = new JComboBox<>(new String[]{"PKCS5Padding", "ISO10126Padding"});
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panel.add(paddingOption);
+        return panel;
+    }
+
+    private JPanel getIVPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        ivInput.setBorder(BorderFactory.createTitledBorder("IV (optional)"));
+        GUIUtils.focusTextArea(ivInput, "IV (optional)");
+        ivInput.setPreferredSize(new Dimension(400, 40));
+        panel.add(ivInput);
+        return panel;
+    }
+
+    private void displayIV() {
+        int mode = modeOption.getSelectedIndex();
+        ivInput.setVisible(mode != Common.Mode.ECB);
+        main.revalidate();
+
     }
 }
