@@ -16,7 +16,7 @@ public class MessageDigestGUI implements AlgorithmGUI {
         hashes = new JComboBox<>(new String[]{"SHA-1", "SHA-256", "SHA-512", "MD5", "RIPEMD-160"});
         hashes.addActionListener(action -> {
             try {
-                doCipher();
+                encrypt();
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
@@ -32,10 +32,15 @@ public class MessageDigestGUI implements AlgorithmGUI {
     }
 
     @Override
-    public void doCipher() throws NoSuchAlgorithmException {
+    public void encrypt() throws NoSuchAlgorithmException {
         if(input.getText().isBlank()) return;
         String algo = hashes.getSelectedItem().toString();
         result.setText(MessageDigest.hash(input.getText(), algo));
+    }
+
+    @Override
+    public void decrypt() {
+
     }
 
     private JPanel getSelection() {

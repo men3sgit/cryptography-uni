@@ -51,10 +51,16 @@ public class HMACGUI implements AlgorithmGUI {
     }
 
     @Override
-    public void doCipher() throws NoSuchAlgorithmException {
+    public void encrypt() throws NoSuchAlgorithmException {
         if (input.getText().isBlank()) return;
         result.setText(MessageDigest.hash(input.getText(), "HmacSHA256"));
     }
+
+    @Override
+    public void decrypt() {
+
+    }
+
     public static void main(String[] args) {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");

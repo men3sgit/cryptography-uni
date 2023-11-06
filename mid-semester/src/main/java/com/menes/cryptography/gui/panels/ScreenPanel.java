@@ -12,7 +12,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import static com.menes.cryptography.gui.GUIUtils.focusTextArea;
@@ -107,7 +106,7 @@ public class ScreenPanel extends JPanel {
                 copyBtn.setVisible(true);
                 try {
                     if (title.getText().equalsIgnoreCase("Message Digest"))
-                        algorithmGUI.doCipher();
+                        algorithmGUI.encrypt();
                 } catch (NoSuchAlgorithmException ex) {
                     result.setText("No support");
                 } catch (Exception ex) {
@@ -155,9 +154,15 @@ public class ScreenPanel extends JPanel {
                 result.setText("");
             } else if (e.getSource() == encryptBtn) {
                 try {
-                    algorithmGUI.doCipher();
+                    algorithmGUI.encrypt();
                 } catch (Exception ex) {
-                    result.setText(ex.getMessage()+"\nSecret key (16, 24, or 32 characters)");
+                    result.setText(ex.getMessage() + "\nSecret key (16, 24, or 32 characters)");
+                }
+            } else if (e.getSource() == decryptBtn) {
+                try {
+                    algorithmGUI.decrypt();
+                } catch (Exception ex) {
+                    throw new RuntimeException();
                 }
             }
         }

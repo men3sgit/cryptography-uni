@@ -1,5 +1,6 @@
 package com.menes.cryptography.gui;
 
+import com.menes.cryptography.algorithms.RSA;
 import com.menes.cryptography.utils.Common;
 import com.menes.cryptography.utils.MarginFactory;
 
@@ -7,22 +8,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class RSAGUI implements AlgorithmGUI {
     private JComboBox<Integer> keySizeOption = new JComboBox<>(new Integer[]{1024, 2048, 4096});
     private JButton generateKeyButton;
     JScrollPane privateScrollPane, publicJScrollPane;
     private JTextArea privateKey = new JTextArea(5, 30), publicKey = new JTextArea(5, 30);
+    private RSA rsa = new RSA();
+    JTextArea input, result;
 
     public RSAGUI(JTextArea input, JTextArea result) {
+        this.result = result;
+        this.input = input;
     }
 
     @Override
     public JPanel renderGUI() {
         JPanel main = new JPanel();
-        main.setPreferredSize(new Dimension(700,400));
+        main.setPreferredSize(new Dimension(700, 400));
         main.setLayout(new FlowLayout(FlowLayout.LEFT));
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -77,11 +81,19 @@ public class RSAGUI implements AlgorithmGUI {
     private JPanel getGenerateKeyPairPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panel.add(generateKeyButton = new JButton("Generate New Pair Keys"));
+        panel.add(generateKeyButton = new JButton("Generate New Key Pair"));
         generateKeyButton.addActionListener(action -> {
+            try {
+                rsa.generateKeyPair((Integer)keySizeOption.getSelectedItem());
+                privateKey.setText(Base64.getEncoder().encodeToString(rsa.getPrivateKey().getEncoded()));
+                publicKey.setText(Base64.getEncoder().encodeToString(rsa.getPublicKey().getEncoded()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
         });
         generateKeyButton.setForeground(Color.WHITE);
-        generateKeyButton.setBorder(BorderFactory.createLineBorder(Color.GRAY,3));
+        generateKeyButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
         generateKeyButton.setBackground(Common.Color.THEME);
         generateKeyButton.setPreferredSize(new Dimension(300, 30));
         generateKeyButton.setFocusable(false);
@@ -122,8 +134,13 @@ public class RSAGUI implements AlgorithmGUI {
 
 
     @Override
-    public void doCipher() throws NoSuchAlgorithmException, InvalidKeyException {
+    public void encrypt() throws Exception {
+        result.setText(rsa.encrypt(input.getText(), rsa.getPublicKey()));
+    }
 
+    @Override
+    public void decrypt() throws Exception {
+        result.setText(rsa.decrypt(input.getText(), rsa.getPrivateKey()));
     }
 
 //    public static void main(String[] args) {
