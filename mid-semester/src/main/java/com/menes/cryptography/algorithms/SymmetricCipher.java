@@ -1,11 +1,9 @@
 package com.menes.cryptography.algorithms;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class SymmetricCipher {
@@ -30,14 +28,17 @@ public class SymmetricCipher {
         return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
     }
 
-    public String decrypt(String cipherText, SecretKey secretKey) throws Exception {
+    public String decrypt(String cipherText, SecretKey secretKey, String initVector) throws Exception {
         byte[] cipherBytes = Base64.getDecoder().decode(cipherText.getBytes(StandardCharsets.UTF_8));
         Cipher cipher = Cipher.getInstance(transform);
-        byte[] iv = new byte[cipher.getBlockSize()];
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-        byte[] decryptedBytes = cipher.doFinal(cipherBytes);
-        return new String(decryptedBytes);
+        if (mode.equalsIgnoreCase("ECB")) {
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        } else {
+            byte[] iv = initVector.isBlank() ? new byte[cipher.getBlockSize()] : Base64.getEncoder().encode(initVector.getBytes(StandardCharsets.UTF_8));
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+        }
+        return new String(cipher.doFinal(cipherBytes));
     }
 }
 // TODO INITVECTOR

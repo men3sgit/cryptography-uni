@@ -44,11 +44,19 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
     }
 
     @Override
-    public void doCipher() throws Exception {
+    public void encrypt() throws Exception {
         if (input.getText().isBlank()) return;
         String transform = String.format("%s/%s/%s", algorithmOption.getSelectedItem(), formatCurrentMode(), paddingOption.getSelectedItem());
         SymmetricCipher cipher = new SymmetricCipher(transform);
         result.setText(cipher.encrypt(input.getText(), getSecretKey(),ivInput.getText()));
+    }
+
+    @Override
+    public void decrypt() throws Exception {
+        if (input.getText().isBlank()) return;
+        String transform = String.format("%s/%s/%s", algorithmOption.getSelectedItem(), formatCurrentMode(), paddingOption.getSelectedItem());
+        SymmetricCipher cipher = new SymmetricCipher(transform);
+        result.setText(cipher.decrypt(input.getText(), getSecretKey(),ivInput.getText()));
     }
 
     private SecretKey getSecretKey() throws NoSuchAlgorithmException {
