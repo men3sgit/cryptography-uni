@@ -10,18 +10,17 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.security.NoSuchAlgorithmException;
 
-import static com.menes.cryptography.gui.GUIUtils.focusTextArea;
 
 public class ScreenPanel extends JPanel {
     private JLabel title = new JLabel("Message Digest");
-    private JTextArea input = new JTextArea(), result = new JTextArea();
+    private JTextArea input = new JTextArea(8, 52), result = new JTextArea(8, 30);
     private AlgorithmGUI algorithmGUI;
     private JButton copyBtn, clearBtn = new JButton("Clear"), encryptBtn = new JButton("Encrypt"), decryptBtn = new JButton("Decrypt");
     private JPanel algoPanel;
+    private JScrollPane inputScrollPane, resultScrollPane;
 
 
     public ScreenPanel() {
@@ -38,7 +37,7 @@ public class ScreenPanel extends JPanel {
         renderTitle();
         add(MarginFactory.marginTop(10));
         renderAlgorithm();
-        add(MarginFactory.marginTop(50));
+        add(MarginFactory.marginTop(10));
         renderInput();
         add(MarginFactory.marginTop(10));
         renderButtons();
@@ -96,10 +95,15 @@ public class ScreenPanel extends JPanel {
     }
 
     private void renderInput() {
-        input.setPreferredSize(new Dimension(Common.Unit.INPUT_WIDTH, Common.Unit.INPUT_HEIGHT));
-        input.setFont(new Font("Courier", Font.PLAIN, Common.Unit.INPUT_TEXT_SIZE));
-        input.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 1), "Input"));
+        inputScrollPane = new JScrollPane(input);
+        inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Input"));
         input.setLineWrap(true);
+        input.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        input.setFont(new Font("Monospaced", Font.TYPE1_FONT, Common.Unit.INPUT_TEXT_SIZE));
+        inputScrollPane.setVerticalScrollBar(new ScrollBar());
+        focusPanel(input);
+        add(inputScrollPane);
+
         input.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -127,23 +131,23 @@ public class ScreenPanel extends JPanel {
 
             }
         });
-        focusTextArea(input, "Input");
-        add(input);
+
     }
 
 
     private void renderResult() {
-        result.setPreferredSize(new Dimension(Common.Unit.INPUT_WIDTH, Common.Unit.INPUT_HEIGHT));
+        resultScrollPane = new JScrollPane(result);
+        resultScrollPane.setVerticalScrollBar(new ScrollBar());
+        resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Result"));
         result.setEditable(false);
         result.setLineWrap(true);
-        result.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 1), "Result"));
+        result.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         result.setFont(new Font("Monospaced", Font.TRUETYPE_FONT, Common.Unit.INPUT_TEXT_SIZE));
-
-        focusTextArea(result, "Result");
-        add(result);
+        focusPanel(result);
+        add(resultScrollPane);
     }
 
-    MouseListener mouseListener = new MouseListener() {
+    MouseAdapter mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getSource() == copyBtn) {
@@ -155,8 +159,11 @@ public class ScreenPanel extends JPanel {
             } else if (e.getSource() == encryptBtn) {
                 try {
                     algorithmGUI.encrypt();
+                    result.setForeground(Color.BLACK);
                 } catch (Exception ex) {
-                    result.setText(ex.getMessage() + "\nSecret key (16, 24, or 32 characters)");
+                    ex.printStackTrace();
+                    result.setText(ex.getMessage());
+                    result.setForeground(Color.RED);
                 }
             } else if (e.getSource() == decryptBtn) {
                 try {
@@ -165,21 +172,6 @@ public class ScreenPanel extends JPanel {
                     throw new RuntimeException();
                 }
             }
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
         }
 
         @Override
@@ -238,48 +230,28 @@ public class ScreenPanel extends JPanel {
         clipboard.setContents(stringSelection, null);
     }
 
-    public String getTitle() {
-        return title.getText();
+
+    public void focusPanel(JComponent component) {
+        component.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (e.getSource() == input) {
+                    inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3),"Input"));
+                } else if (e.getSource() == result)
+                    resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3),"Result"));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (e.getSource() == input) {
+                    inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Input"));
+                } else if (e.getSource() == result)
+                    resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Result"));
+            }
+        });
     }
 
-    public JTextArea getInput() {
-        return input;
-    }
-
-    public JTextArea getResult() {
-        return result;
-    }
-
-    public JButton getCopyBtn() {
-        return copyBtn;
-    }
-
-    public JButton getClearBtn() {
-        return clearBtn;
-    }
-
-    public void setTitle(String title) {
-        this.title.setText(title);
-
-    }
-
-    public void setInput(JTextArea input) {
-        this.input = input;
-    }
-
-    public void setResult(JTextArea result) {
-        this.result = result;
-    }
-
-    public void setCopyBtn(JButton copyBtn) {
-        this.copyBtn = copyBtn;
-    }
-
-    public void setClearBtn(JButton clearBtn) {
-        this.clearBtn = clearBtn;
-    }
 }
-
 /*
  * TODO 1: change name title from right title
  * TODO 1.1: change jcomboBox

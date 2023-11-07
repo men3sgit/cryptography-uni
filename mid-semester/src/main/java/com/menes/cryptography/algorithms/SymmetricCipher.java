@@ -1,9 +1,10 @@
 package com.menes.cryptography.algorithms;
-
+import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class SymmetricCipher {
@@ -17,6 +18,8 @@ public class SymmetricCipher {
 
     public String encrypt(String plainText, SecretKey secretKey, String initVector) throws Exception {
         Cipher cipher = Cipher.getInstance(transform);
+        System.out.println(transform);
+        System.out.println(Arrays.toString(secretKey.getEncoded()));
         if (mode.equalsIgnoreCase("ECB")) {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         } else {
