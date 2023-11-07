@@ -128,8 +128,6 @@ public class RSAGUI implements AlgorithmGUI {
                     publicJScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1)));
             }
         });
-
-
     }
 
 
