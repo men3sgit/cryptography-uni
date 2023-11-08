@@ -1,8 +1,9 @@
 package com.menes.cryptography.gui;
 
 import com.menes.cryptography.algorithms.SymmetricCipher;
+import com.menes.cryptography.utils.CharacterLimitTextField;
 import com.menes.cryptography.utils.Common;
-import javax.crypto.spec.DESedeKeySpec;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -15,7 +16,8 @@ import java.util.Base64;
 
 public class SymmetricEncryptionGUI implements AlgorithmGUI {
     JPanel main;
-    JTextField keyInput = new JTextField(), ivInput = new JTextField();
+    JTextField ivInput = new JTextField();
+    CharacterLimitTextField keyInput = new CharacterLimitTextField(0);
     JComboBox<?> algorithmOption;
     JComboBox<?> modeOption;
     JComboBox<?> paddingOption;
@@ -60,8 +62,11 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
     }
 
     private SecretKey getSecretKey() throws NoSuchAlgorithmException {
-
-        return new SecretKeySpec(Base64.getDecoder().decode(keyInput.getText().getBytes(StandardCharsets.UTF_8)), algorithmOption.getSelectedItem().toString());
+        int charNum = ((Integer) bitOption.getSelectedItem() / 8);
+        byte[] secretKey = new byte[charNum];
+        byte[] input = keyInput.getText().substring(0, Math.min(charNum, keyInput.getText().length())).getBytes(StandardCharsets.UTF_8);
+        System.arraycopy(secretKey, 0, input, 0, input.length);
+        return new SecretKeySpec(secretKey, algorithmOption.getSelectedItem().toString());
     }
 
     private JPanel getSelectMode() {
@@ -94,6 +99,7 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
     }
 
     private JPanel getKeyAndBitSelection() {
+        keyInput.setCharacterLimit((Integer) bitOption.getSelectedItem());
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(new JLabel("Enter key or"));
@@ -104,7 +110,6 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         generateBtn.addActionListener(action -> {
             try {
                 String key = getGenerateKeyString();
-                System.out.println(key);
                 keyInput.setText(key);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
@@ -112,6 +117,7 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         });
         generateBtn.setFocusable(false);
         generateBtn.setCursor(Common.Cursor.HAND_CURSOR);
+
         panel.add(generateBtn);
         bitOption = new JComboBox<>();
         generateBitOption();
@@ -123,10 +129,8 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
     private String getGenerateKeyString() throws NoSuchAlgorithmException {
         String algo = algorithmOption.getSelectedItem().toString();
         KeyGenerator keyGenerator = KeyGenerator.getInstance(algo.equalsIgnoreCase("Triple DES") ? "DESede" : algo);
-        byte[] array = keyGenerator.generateKey().getEncoded();
-        System.out.println(keyGenerator.getAlgorithm());
-        System.out.println(Arrays.toString(array));
         keyGenerator.init((Integer) bitOption.getSelectedItem());
+        byte[] array = keyGenerator.generateKey().getEncoded();
         return Base64.getEncoder().encodeToString(array);
     }
 
@@ -193,4 +197,5 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         main.revalidate();
 
     }
+
 }
