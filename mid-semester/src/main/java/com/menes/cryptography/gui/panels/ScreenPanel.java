@@ -169,6 +169,7 @@ public class ScreenPanel extends JPanel {
                 try {
                     algorithmGUI.decrypt();
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     throw new RuntimeException();
                 }
             }
