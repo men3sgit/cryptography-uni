@@ -9,16 +9,19 @@ import java.awt.*;
 public class MainPanel extends JPanel {
     private ScreenPanel screenPanel;
     private RightTitlePanel rightTitlePanel;
-    public MainPanel(){
+
+    public MainPanel() {
         init();
-        add(screenPanel = new ScreenPanel(),BorderLayout.CENTER);
-        add(rightTitlePanel = new RightTitlePanel(screenPanel),BorderLayout.EAST);
-        add(MarginFactory.marginLeft(30),BorderLayout.WEST);
+        add(screenPanel = new ScreenPanel(), BorderLayout.CENTER);
+        add(rightTitlePanel = new RightTitlePanel(screenPanel), BorderLayout.EAST);
+        add(MarginFactory.marginLeft(30), BorderLayout.WEST);
+
+
 
     }
 
     private void init() {
-        setPreferredSize(new Dimension(Common.Unit.MAIN_WIDTH,Common.Unit.MAIN_HEIGHT));
+        setPreferredSize(new Dimension(Common.Unit.MAIN_WIDTH, Common.Unit.MAIN_HEIGHT));
         setLayout(new BorderLayout());
     }
 }

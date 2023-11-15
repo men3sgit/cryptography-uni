@@ -11,13 +11,10 @@ public class MessageDigest {
     public static String hash(String input, String algo) throws NoSuchAlgorithmException {
         if (algo.equalsIgnoreCase("RIPEMD-160")) {
             RIPEMD160Digest ripemd160Digest = new RIPEMD160Digest();
-
             byte[] inputData = input.getBytes();
             ripemd160Digest.update(inputData, 0, inputData.length);
-
             byte[] outputData = new byte[ripemd160Digest.getDigestSize()];
             ripemd160Digest.doFinal(outputData, 0);
-
             return Hex.toHexString(outputData);
         }
         java.security.MessageDigest digest = java.security.MessageDigest.getInstance(algo);

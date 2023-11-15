@@ -6,11 +6,15 @@ import javax.swing.text.*;
 public class CharacterLimitTextField extends JTextField {
     private int characterLimit;
     private PlainDocument doc;
+
     public CharacterLimitTextField(int characterLimit) {
         this.characterLimit = characterLimit;
-
         this.doc = (PlainDocument) getDocument();
         doc.setDocumentFilter(new DocumentSizeFilter(characterLimit));
+    }
+
+    public CharacterLimitTextField() {
+        this(0);
     }
 
     private class DocumentSizeFilter extends DocumentFilter {
@@ -36,20 +40,11 @@ public class CharacterLimitTextField extends JTextField {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Character Limit Example");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(300, 100);
-
-            CharacterLimitTextField textField = new CharacterLimitTextField(10);
-            frame.add(textField);
-
-            frame.setVisible(true);
-        });
-    }
-    public void setCharacterLimit(int n){
+    public void setCharacterLimit(int n) {
         this.characterLimit = n;
         doc.setDocumentFilter(new DocumentSizeFilter(characterLimit));
+    }
+    public int getCharacterLimit(){
+        return characterLimit;
     }
 }
