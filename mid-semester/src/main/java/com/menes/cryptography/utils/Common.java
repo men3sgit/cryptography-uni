@@ -44,4 +44,13 @@ public class Common {
         java.awt.Color COPIED = new java.awt.Color(50, 183, 127);
         java.awt.Color ENTERED = new java.awt.Color(213, 212, 187);
     }
+
+    public interface Symmetric {
+        String DES = "DES";
+        String HILL = "Hill";
+        String VIGERNE = "Vigerne";
+        String BLOWFISH = "Blowfish";
+        String AES = "AES";
+        String TRIPLE_DES = "DESede";
+    }
 }
