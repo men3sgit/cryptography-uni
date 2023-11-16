@@ -9,14 +9,11 @@ import java.awt.*;
 public class MainPanel extends JPanel {
     private ScreenPanel screenPanel;
     private RightTitlePanel rightTitlePanel;
-
-    public MainPanel() {
+    public MainPanel(boolean isFileMode) {
         init();
-        add(screenPanel = new ScreenPanel(), BorderLayout.CENTER);
+        add(screenPanel = new ScreenPanel(isFileMode), BorderLayout.CENTER);
         add(rightTitlePanel = new RightTitlePanel(screenPanel), BorderLayout.EAST);
         add(MarginFactory.marginLeft(30), BorderLayout.WEST);
-
-
 
     }
 

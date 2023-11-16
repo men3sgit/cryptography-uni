@@ -1,6 +1,7 @@
 package com.menes.cryptography.gui;
 
 import com.menes.cryptography.algorithms.MessageDigest;
+import com.menes.cryptography.gui.panels.ScreenPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,11 +10,13 @@ import java.security.NoSuchAlgorithmException;
 public class MessageDigestGUI implements AlgorithmGUI {
     JComboBox<String> hashes;
     JTextArea input, result;
+    private final ScreenPanel screenPanel;
 
-    public MessageDigestGUI(JTextArea input, JTextArea result) {
-        this.input = input;
-        this.result = result;
-        hashes = new JComboBox<>(new String[]{"SHA-1", "SHA-256", "SHA-512", "MD5", "RIPEMD-160"});
+    public MessageDigestGUI(ScreenPanel screenPanel) {
+        this.screenPanel = screenPanel;
+        this.input = screenPanel.getInput();
+        this.result = screenPanel.getResult();
+        hashes = new JComboBox<>(new String[]{"SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512", "SHA-512/224", "SHA-512/256", "MD5", "RIPEMD-160"});
         hashes.addActionListener(action -> {
             try {
                 encrypt();
@@ -33,9 +36,15 @@ public class MessageDigestGUI implements AlgorithmGUI {
 
     @Override
     public void encrypt() throws NoSuchAlgorithmException {
-        if(input.getText().isBlank()) return;
         String algo = hashes.getSelectedItem().toString();
-        result.setText(MessageDigest.hash(input.getText(), algo));
+        String message = "";
+        if (screenPanel.isFileMode()) {
+            message = MessageDigest.hash(screenPanel.getFileChooser().getSelectedFile(), algo);
+        } else if (input.getText().isBlank()) return;
+        else {
+            message = MessageDigest.hash(input.getText(), algo);
+        }
+        result.setText(message);
     }
 
     @Override
@@ -51,5 +60,6 @@ public class MessageDigestGUI implements AlgorithmGUI {
         rs.add(hashes);
         return rs;
     }
+
 
 }

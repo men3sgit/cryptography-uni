@@ -21,9 +21,12 @@ public class ScreenPanel extends JPanel {
     private JButton copyBtn, clearBtn = new JButton("Clear"), encryptBtn = new JButton("Encrypt"), decryptBtn = new JButton("Decrypt");
     private JPanel algoPanel;
     private JScrollPane inputScrollPane, resultScrollPane;
+    private boolean isFileMode;
+    private JTextField fileTextField = new JTextField("No file chosen");
+    private JFileChooser fileChooser;
 
-
-    public ScreenPanel() {
+    public ScreenPanel(boolean isFileMode) {
+        this.isFileMode = isFileMode;
         renderComponents();
         init();
     }
@@ -62,7 +65,7 @@ public class ScreenPanel extends JPanel {
         algoPanel.removeAll();
         revalidate();
         if (algo.equalsIgnoreCase("Message Digest")) {
-            algorithmGUI = new MessageDigestGUI(input, result);
+            algorithmGUI = new MessageDigestGUI(this);
             displayButton(Boolean.FALSE);
         } else if (algo.equalsIgnoreCase("HMAC")) {
             algorithmGUI = new HMACGUI(input, result);
@@ -95,8 +98,44 @@ public class ScreenPanel extends JPanel {
     }
 
     private void renderInput() {
+        if (isFileMode) {
+            JButton openButton = new JButton("Choose File");
+            openButton.setForeground(Color.WHITE);
+            openButton.setBackground(Common.Color.THEME);
+            openButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            openButton.setFocusable(false);
+            openButton.setPreferredSize(new Dimension(100, 30));
+            openButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            openButton.addActionListener(action -> {
+
+                fileChooser = new JFileChooser();
+                int result = fileChooser.showOpenDialog(this);
+                // Check if a file was selected:
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    // Get the selected file:
+                    java.io.File selectedFile = fileChooser.getSelectedFile();
+                    fileTextField.setText(selectedFile.getAbsolutePath());
+                    try {
+                        algorithmGUI.encrypt();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+
+            JPanel panel = new JPanel();
+            panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            panel.add(openButton);
+            fileTextField.setEditable(false);
+            fileTextField.setForeground(Common.Color.THEME);
+            fileTextField.setPreferredSize(new Dimension(300, 30));
+            panel.add(fileTextField);
+            add(panel);
+            return;
+        }
+
         inputScrollPane = new JScrollPane(input);
-        inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Input"));
+        inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1), "Input"));
         input.setLineWrap(true);
         input.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         input.setFont(new Font("Monospaced", Font.TYPE1_FONT, Common.Unit.INPUT_TEXT_SIZE));
@@ -138,7 +177,7 @@ public class ScreenPanel extends JPanel {
     private void renderResult() {
         resultScrollPane = new JScrollPane(result);
         resultScrollPane.setVerticalScrollBar(new ScrollBar());
-        resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Result"));
+        resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1), "Result"));
         result.setEditable(false);
         result.setLineWrap(true);
         result.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
@@ -237,26 +276,75 @@ public class ScreenPanel extends JPanel {
             @Override
             public void focusGained(FocusEvent e) {
                 if (e.getSource() == input) {
-                    inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3),"Input"));
+                    inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3), "Input"));
                 } else if (e.getSource() == result)
-                    resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3),"Result"));
+                    resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3), "Result"));
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 if (e.getSource() == input) {
-                    inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Input"));
+                    inputScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1), "Input"));
                 } else if (e.getSource() == result)
-                    resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1),"Result"));
+                    resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1), "Result"));
             }
         });
     }
 
+    public JTextArea getInput() {
+        return input;
+    }
+
+    public JTextArea getResult() {
+        return result;
+    }
+
+    public AlgorithmGUI getAlgorithmGUI() {
+        return algorithmGUI;
+    }
+
+    public JButton getCopyBtn() {
+        return copyBtn;
+    }
+
+    public JButton getClearBtn() {
+        return clearBtn;
+    }
+
+    public JButton getEncryptBtn() {
+        return encryptBtn;
+    }
+
+    public JButton getDecryptBtn() {
+        return decryptBtn;
+    }
+
+    public JPanel getAlgoPanel() {
+        return algoPanel;
+    }
+
+    public JScrollPane getInputScrollPane() {
+        return inputScrollPane;
+    }
+
+    public JScrollPane getResultScrollPane() {
+        return resultScrollPane;
+    }
+
+    public boolean isFileMode() {
+        return isFileMode;
+    }
+
+    public JTextField getFileTextField() {
+        return fileTextField;
+    }
+
+    public JFileChooser getFileChooser() {
+        return fileChooser;
+    }
+
+    public MouseAdapter getMouseListener() {
+        return mouseListener;
+    }
 }
-/*
- * TODO 1: change name title from right title
- * TODO 1.1: change jcomboBox
- *
- * TODO 2: Block Cipher
- *
- */
+
