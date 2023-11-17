@@ -48,7 +48,12 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
     }
 
     private void loadingSymmetric() {
+        result.setText("");
         String algo = algorithmOption.getSelectedItem().toString();
+        if (algo.equalsIgnoreCase("Hill") || algo.equalsIgnoreCase("Vigenere")) {
+            result.setText("Da, em chua lam phan nay!");
+            return;
+        }
         String transform = String.format("%s/%s/%s", algo.equalsIgnoreCase("Triple DES") ? "DESede" : algo, formatCurrentMode(), paddingOption.getSelectedItem());
         symmetricCipher = SymmetricCipherFactory.getInstance(transform);
         keyInput.setCharacterLimit(symmetricCipher.getKeySize());
@@ -56,7 +61,7 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
 
     @Override
     public void encrypt() throws Exception {
-        if (input.getText().isBlank()) return;
+        if (input.getText().trim().isEmpty()) return;
         try {
             byte[] data = input.getText().getBytes(StandardCharsets.UTF_8);
             symmetricCipher.setSecretKey(keyInput.getText());
@@ -75,7 +80,7 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
 
     @Override
     public void decrypt() throws Exception {
-        if (input.getText().isBlank()) return;
+        if (input.getText().trim().isEmpty()) return;
         try {
             byte[] data = input.getText().getBytes(StandardCharsets.UTF_8);
             byte[] encryptedBytes = Base64.getDecoder().decode(data);
@@ -109,7 +114,7 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(new JLabel("Select block cipher name"));
-        algorithmOption = new JComboBox<>(Arrays.stream(new String[]{"Triple DES", "DES", "HILL", "Vigenere", "AES", "Blowfish"}).sorted().toArray());
+        algorithmOption = new JComboBox<>(Arrays.stream(new String[]{"Triple DES", "DES", "Hill", "Vigenere", "AES", "Blowfish"}).sorted().toArray());
         algorithmOption.addActionListener(e -> {
             generateBitOption();
             loadingSymmetric();
@@ -158,12 +163,16 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
 
 
     private String formatCurrentMode() {
-        return switch (modeOption.getSelectedIndex()) {
-            case 1 -> "CFB";
-            case 2 -> "OFB";
-            case 3 -> "CBC";
-            default -> "ECB";
-        };
+        switch (modeOption.getSelectedIndex()) {
+            case 1:
+                return "CFB";
+            case 2:
+                return "OFB";
+            case 3:
+                return "CBC";
+            default:
+                return "ECB";
+        }
     }
 
     private void generateBitOption() {
@@ -212,12 +221,13 @@ public class SymmetricEncryptionGUI implements AlgorithmGUI {
         ivInput.setCharacterLimit(8);
         ivPanel.add(ivInput);
         ivGenerateBtn.addActionListener(action -> {
-            String sub  = Base64.getEncoder().encodeToString(symmetricCipher.getIv().getIV()).substring(0,8);
+            String sub = Base64.getEncoder().encodeToString(symmetricCipher.getIv().getIV()).substring(0, 8);
             ivInput.setText(sub);
         });
         ivGenerateBtn.setBackground(Common.Color.THEME);
         ivGenerateBtn.setForeground(Color.WHITE);
         ivGenerateBtn.setFocusable(false);
+        ivGenerateBtn.setPreferredSize(new Dimension(120, 36));
         ivGenerateBtn.setCursor(Common.Cursor.HAND_CURSOR);
         ivPanel.add(ivGenerateBtn);
         main.add(ivPanel);

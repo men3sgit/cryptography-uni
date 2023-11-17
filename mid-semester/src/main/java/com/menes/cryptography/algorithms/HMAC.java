@@ -13,17 +13,13 @@ import java.util.Base64;
 public class HMAC {
     private String secretKey = "mySecretKey";
 
-    public String doCipher(String message, String algo) {
+    public String doCipher(String message) {
         try {
-            // Create HMAC-SHA256 Mac instance and initialize it with the secret key
-            Mac sha256Hmac = Mac.getInstance(algo);
-            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), algo);
+
+            Mac sha256Hmac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             sha256Hmac.init(secretKeySpec);
-
-            // Compute the HMAC of the message
             byte[] hmacBytes = sha256Hmac.doFinal(message.getBytes(StandardCharsets.UTF_8));
-
-            // Convert the HMAC bytes to a Base64-encoded string
             return Base64.getEncoder().encodeToString(hmacBytes);
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             e.printStackTrace();
@@ -34,6 +30,7 @@ public class HMAC {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
+
     public String getKeyString() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
         SecureRandom random = new SecureRandom();

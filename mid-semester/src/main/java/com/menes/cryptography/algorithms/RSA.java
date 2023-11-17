@@ -3,8 +3,10 @@ package com.menes.cryptography.algorithms;
 import com.menes.cryptography.utils.FileUtils;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Base64;
@@ -41,10 +43,11 @@ public class RSA {
     }
 
     public void encryptFile(String inputFile, Key publicKey) throws Exception {
-        try (FileInputStream inputStream = new FileInputStream(inputFile);
-             FileOutputStream outputStream = new FileOutputStream(
-                     FileUtils.appendFileName(inputFile,
-                             String.format("-enc-%d", System.currentTimeMillis())))) {
+        try {
+            FileInputStream inputStream = new FileInputStream(inputFile);
+            FileOutputStream outputStream = new FileOutputStream(
+                    FileUtils.appendFileName(inputFile,
+                            String.format("-enc-%d", System.currentTimeMillis())));
 
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -59,6 +62,9 @@ public class RSA {
                 }
             }
             outputStream.flush();
+            outputStream.close();
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

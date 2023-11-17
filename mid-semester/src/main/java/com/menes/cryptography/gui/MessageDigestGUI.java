@@ -2,6 +2,7 @@ package com.menes.cryptography.gui;
 
 import com.menes.cryptography.algorithms.MessageDigest;
 import com.menes.cryptography.gui.panels.ScreenPanel;
+import com.menes.cryptography.utils.Common;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +17,7 @@ public class MessageDigestGUI implements AlgorithmGUI {
         this.screenPanel = screenPanel;
         this.input = screenPanel.getInput();
         this.result = screenPanel.getResult();
-        hashes = new JComboBox<>(new String[]{"SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512", "SHA-512/224", "SHA-512/256", "MD5", "RIPEMD-160"});
+        hashes = new JComboBox<>(Common.Data.hashes);
         hashes.addActionListener(action -> {
             try {
                 encrypt();
@@ -41,10 +42,11 @@ public class MessageDigestGUI implements AlgorithmGUI {
         if (screenPanel.isFileMode()) {
             if (screenPanel.getFileTextField().getText().equalsIgnoreCase("No file chosen")) return;
             message = MessageDigest.hash(screenPanel.getFileChooser().getSelectedFile(), algo);
-        } else if (input.getText().isBlank()) return;
+        } else if (input.getText().trim().isEmpty()) return;
         else {
             message = MessageDigest.hash(input.getText(), algo);
         }
+        result.setForeground(Color.BLACK);
         result.setText(message);
     }
 

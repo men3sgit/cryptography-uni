@@ -29,13 +29,13 @@ public class RightTitlePanel extends JPanel {
 
     private void renderButtons() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 20, 5)); // 0 rows means any number of rows, 1 column
-        panel.setBorder(BorderFactory.createLineBorder(Common.Color.THEME,3));
+        panel.setBorder(BorderFactory.createLineBorder(Common.Color.THEME, 3));
         titlePanels = new ArrayList<>();
         titlePanels.add(new JLabel("Message Digest"));
-        titlePanels.add(new JLabel("HMAC"));
+        titlePanels.add(new JLabel("HMAC-SHA256"));
         titlePanels.add(new JLabel("Block Ciphers"));
-        titlePanels.add(new JLabel("Electronic Signature"));
-        titlePanels.add(new JLabel("RSA"));
+        if (screenPanel.isFileMode()) titlePanels.add(new JLabel("Electronic Signature"));
+        if (!screenPanel.isFileMode()) titlePanels.add(new JLabel("RSA"));
 
         titlePanels.forEach(label -> {
             label.addMouseListener(new MouseAdapter() {

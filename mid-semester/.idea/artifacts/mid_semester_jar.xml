@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="mid-semester:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/mid_semester_jar</output-path>
+    <root id="archive" name="mid-semester.jar">
+      <element id="module-output" name="mid-semester" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.68/bcprov-jdk15on-1.68.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

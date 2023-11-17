@@ -63,9 +63,6 @@ public abstract class SymmetricCipher {
 
     }
 
-    public void encryptFile(String filePath) {
-
-    }
 
     public void encryptFile(String sourceFilePath, String destFilePath) throws Exception {
         if (keyNotFound()) throw new KeyException("KEY NOT FOUND");
@@ -128,11 +125,18 @@ public abstract class SymmetricCipher {
 
     public SecretKey getSecretKey() throws KeyException, NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(algo);
-        int size = switch (algo) {
-            case Common.Symmetric.DES -> 56;
-            case Common.Symmetric.TRIPLE_DES -> 168;
-            default -> keySize * 8;
-        };
+        int size;
+        switch (algo) {
+            case Common.Symmetric.DES:
+                size = 56;
+                break;
+            case Common.Symmetric.TRIPLE_DES:
+                size = 168;
+                break;
+            default:
+                size = keySize * 8;
+                break;
+        }
         keyGenerator.init(size);
         return this.secretKey = keyGenerator.generateKey();
     }

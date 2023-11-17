@@ -6,6 +6,9 @@ public class Common {
     public interface Cursor {
         java.awt.Cursor HAND_CURSOR = new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR);
     }
+    public interface Data{
+        String[] hashes = new String[]{"SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512", "SHA-512/224", "SHA-512/256", "MD5", "RIPEMD-160"};
+    }
 
     public interface Title {
         String BLOCK_CIPHERS = "Block ciphers (Symmetric)";
@@ -40,7 +43,7 @@ public class Common {
     }
 
     public interface Color {
-        java.awt.Color THEME = new java.awt.Color(44, 58, 77);
+        java.awt.Color THEME = new java.awt.Color(40, 60, 80);
         java.awt.Color COPIED = new java.awt.Color(50, 183, 127);
         java.awt.Color ENTERED = new java.awt.Color(213, 212, 187);
     }

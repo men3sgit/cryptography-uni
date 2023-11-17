@@ -158,8 +158,14 @@ public class RSAGUI implements AlgorithmGUI {
             }
             return;
         }
-
-        result.setText(rsa.encrypt(input.getText(), rsa.getPublicKey()));
+        if (input.getText().trim().isEmpty()) return;
+        try {
+            result.setForeground(Color.BLACK);
+            result.setText(rsa.encrypt(input.getText(), rsa.getPublicKey()));
+        } catch (Exception e) {
+            result.setForeground(Color.RED);
+            result.setText(e.getMessage());
+        }
     }
 
     @Override
@@ -179,7 +185,14 @@ public class RSAGUI implements AlgorithmGUI {
             }
             return;
         }
-        result.setText(rsa.decrypt(input.getText(), rsa.getPrivateKey()));
+        if (input.getText().trim().isEmpty()) return;
+        try {
+            result.setForeground(Color.BLACK);
+            result.setText(rsa.decrypt(input.getText(), rsa.getPrivateKey()));
+        } catch (Exception e) {
+            result.setForeground(Color.RED);
+            result.setText(e.getMessage());
+        }
     }
 
 }

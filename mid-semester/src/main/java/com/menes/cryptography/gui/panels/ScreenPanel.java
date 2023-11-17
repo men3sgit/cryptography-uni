@@ -16,12 +16,12 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class ScreenPanel extends JPanel {
-    private JLabel title = new JLabel("RSA");
+    private JLabel title = new JLabel("Block Ciphers");
     private JTextArea input = new JTextArea(8, 52), result = new JTextArea(8, 30);
     private AlgorithmGUI algorithmGUI;
-    private JButton copyBtn, clearBtn = new JButton("Clear"), encryptBtn = new JButton("Encrypt"), decryptBtn = new JButton("Decrypt");
+    private JButton copyBtn, clearBtn = new JButton("Clear"), encryptBtn = new JButton("Encrypt"), decryptBtn = new JButton("Decrypt"), verify = new JButton("Verify");
     private JPanel algoPanel;
-    private JScrollPane inputScrollPane, resultScrollPane;
+    private JScrollPane inputScrollPane, resultScrollPane = new JScrollPane(result);
     private boolean isFileMode;
     private JTextField fileTextField = new JTextField("No file chosen");
     private JFileChooser fileChooser;
@@ -64,14 +64,20 @@ public class ScreenPanel extends JPanel {
         clearData();
         displayButton(Boolean.TRUE);
         algoPanel.removeAll();
+        ESMode(false);
+        HMACMode(false);
         revalidate();
         if (algo.equalsIgnoreCase("Message Digest")) {
             algorithmGUI = new MessageDigestGUI(this);
             displayButton(Boolean.FALSE);
-        } else if (algo.equalsIgnoreCase("HMAC")) {
+        } else if (algo.equalsIgnoreCase("HMAC-SHA256")) {
             algorithmGUI = new HMACGUI(input, result);
+            HMACMode(true);
         } else if (algo.equalsIgnoreCase("RSA")) {
             algorithmGUI = new RSAGUI(this);
+        } else if (algo.equalsIgnoreCase("Electronic Signature")) {
+            algorithmGUI = new ElectronicSignature(this);
+            ESMode(true);
         } else {
             algorithmGUI = new SymmetricEncryptionGUI(input, result);
         }
@@ -165,7 +171,7 @@ public class ScreenPanel extends JPanel {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                if (input.getText().isBlank()) {
+                if (input.getText().trim().isEmpty()) {
                     result.setText("");
                     copyBtn.setVisible(false);
                 }
@@ -181,7 +187,7 @@ public class ScreenPanel extends JPanel {
 
 
     private void renderResult() {
-        resultScrollPane = new JScrollPane(result);
+
         resultScrollPane.setVerticalScrollBar(new ScrollBar());
         resultScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Common.Color.THEME, 1), "Result"));
         result.setEditable(false);
@@ -195,7 +201,13 @@ public class ScreenPanel extends JPanel {
     MouseAdapter mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getSource() == copyBtn) {
+            if (e.getSource() == verify) {
+                try {
+                    algorithmGUI.encrypt();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else if (e.getSource() == copyBtn) {
                 copyBtn.setText("Copied");
                 copyToClipboard(result.getText());
             } else if (e.getSource() == clearBtn) {
@@ -257,6 +269,7 @@ public class ScreenPanel extends JPanel {
         initButton(encryptBtn, panel);
         initButton(decryptBtn, panel);
         initButton(clearBtn, panel);
+        initButton(verify, panel);
         add(panel);
     }
 
@@ -356,6 +369,19 @@ public class ScreenPanel extends JPanel {
 
     public MouseAdapter getMouseListener() {
         return mouseListener;
+    }
+
+    public void ESMode(boolean is) {
+        this.clearBtn.setVisible(!is);
+        this.encryptBtn.setVisible(!is);
+        this.decryptBtn.setVisible(!is);
+        this.verify.setVisible(is);
+        revalidate();
+    }
+    public void HMACMode(boolean is) {
+        this.clearBtn.setVisible(!is);
+        this.decryptBtn.setVisible(!is);
+        revalidate();
     }
 }
 

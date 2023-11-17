@@ -52,8 +52,8 @@ public class HMACGUI implements AlgorithmGUI {
 
     @Override
     public void encrypt() throws NoSuchAlgorithmException {
-        if (input.getText().isBlank()) return;
-        result.setText(MessageDigest.hash(input.getText(), "HmacSHA256"));
+        if (input.getText().trim().isEmpty()) return;
+        result.setText(hmac.doCipher(input.getText()));
     }
 
     @Override

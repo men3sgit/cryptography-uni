@@ -7,6 +7,6 @@ import javax.swing.SwingUtilities;
 
 public class CryptographyToolLauncher {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Application(Boolean.TRUE).setVisible(true));
+        SwingUtilities.invokeLater(() -> new Application(Boolean.FALSE).setVisible(true));
     }
 }
