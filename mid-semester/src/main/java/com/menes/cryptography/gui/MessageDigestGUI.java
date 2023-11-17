@@ -39,6 +39,7 @@ public class MessageDigestGUI implements AlgorithmGUI {
         String algo = hashes.getSelectedItem().toString();
         String message = "";
         if (screenPanel.isFileMode()) {
+            if (screenPanel.getFileTextField().getText().equalsIgnoreCase("No file chosen")) return;
             message = MessageDigest.hash(screenPanel.getFileChooser().getSelectedFile(), algo);
         } else if (input.getText().isBlank()) return;
         else {

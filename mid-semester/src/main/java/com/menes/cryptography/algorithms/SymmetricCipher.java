@@ -102,8 +102,6 @@ public abstract class SymmetricCipher {
         inputStream.close();
     }
 
-    // TODO: show first file which invalid
-
 
     public void decryptFile(String sourceFilePath) throws KeyException, IOException {
         if (keyNotFound()) throw new KeyException("KEY NOT FOUND");

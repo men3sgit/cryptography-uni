@@ -1,6 +1,4 @@
-package com.menes.cryptography.gui;
-
-import com.menes.cryptography.gui.panels.MainPanel;
+package com.menes.cryptography.gui.panels;
 
 import javax.swing.*;
 

@@ -2,7 +2,7 @@ package com.menes.cryptography.gui;
 
 import com.menes.cryptography.algorithms.SymmetricCipher;
 import com.menes.cryptography.algorithms.SymmetricCipherFactory;
-import com.menes.cryptography.utils.CharacterLimitTextField;
+import com.menes.cryptography.gui.custom.CharacterLimitTextField;
 import com.menes.cryptography.utils.Common;
 
 import javax.swing.*;

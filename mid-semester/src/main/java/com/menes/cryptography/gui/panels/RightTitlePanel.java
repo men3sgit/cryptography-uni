@@ -1,7 +1,7 @@
 package com.menes.cryptography.gui.panels;
 
 import com.menes.cryptography.utils.Common;
-import com.menes.cryptography.utils.MarginFactory;
+import com.menes.cryptography.gui.custom.MarginFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +29,7 @@ public class RightTitlePanel extends JPanel {
 
     private void renderButtons() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 20, 5)); // 0 rows means any number of rows, 1 column
-        panel.setBorder(BorderFactory.createLineBorder(Common.Color.THEME,5));
+        panel.setBorder(BorderFactory.createLineBorder(Common.Color.THEME,3));
         titlePanels = new ArrayList<>();
         titlePanels.add(new JLabel("Message Digest"));
         titlePanels.add(new JLabel("HMAC"));

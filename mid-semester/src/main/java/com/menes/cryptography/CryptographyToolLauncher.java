@@ -1,6 +1,6 @@
 package com.menes.cryptography;
 
-import com.menes.cryptography.gui.Application;
+import com.menes.cryptography.gui.panels.Application;
 
 import javax.swing.SwingUtilities;
 

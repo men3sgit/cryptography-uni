@@ -1,4 +1,4 @@
-package com.menes.cryptography.utils;
+package com.menes.cryptography.gui.custom;
 
 import javax.swing.*;
 import javax.swing.text.*;

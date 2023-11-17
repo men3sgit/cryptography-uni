@@ -1,4 +1,4 @@
-package com.menes.cryptography.gui;
+package com.menes.cryptography.gui.custom;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;

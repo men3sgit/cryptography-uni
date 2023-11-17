@@ -1,8 +1,9 @@
 package com.menes.cryptography.gui.panels;
 
 import com.menes.cryptography.gui.*;
+import com.menes.cryptography.gui.custom.ScrollBar;
 import com.menes.cryptography.utils.Common;
-import com.menes.cryptography.utils.MarginFactory;
+import com.menes.cryptography.gui.custom.MarginFactory;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -15,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class ScreenPanel extends JPanel {
-    private JLabel title = new JLabel("Message Digest");
+    private JLabel title = new JLabel("RSA");
     private JTextArea input = new JTextArea(8, 52), result = new JTextArea(8, 30);
     private AlgorithmGUI algorithmGUI;
     private JButton copyBtn, clearBtn = new JButton("Clear"), encryptBtn = new JButton("Encrypt"), decryptBtn = new JButton("Decrypt");
@@ -70,7 +71,7 @@ public class ScreenPanel extends JPanel {
         } else if (algo.equalsIgnoreCase("HMAC")) {
             algorithmGUI = new HMACGUI(input, result);
         } else if (algo.equalsIgnoreCase("RSA")) {
-            algorithmGUI = new RSAGUI(input, result);
+            algorithmGUI = new RSAGUI(this);
         } else {
             algorithmGUI = new SymmetricEncryptionGUI(input, result);
         }
@@ -109,16 +110,21 @@ public class ScreenPanel extends JPanel {
             openButton.addActionListener(action -> {
 
                 fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(this);
+                int ans = fileChooser.showOpenDialog(this);
                 // Check if a file was selected:
-                if (result == JFileChooser.APPROVE_OPTION) {
+                if (ans == JFileChooser.APPROVE_OPTION) {
                     // Get the selected file:
                     java.io.File selectedFile = fileChooser.getSelectedFile();
                     fileTextField.setText(selectedFile.getAbsolutePath());
                     try {
-                        algorithmGUI.encrypt();
+                        result.setForeground(Color.BLACK);
+                        if (title.getText().equalsIgnoreCase("Message Digest")) {
+                            algorithmGUI.encrypt();
+                            copyBtn.setVisible(true);
+                        }
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        result.setForeground(Color.RED);
+                        result.setText(e.getMessage());
                     }
                 }
             });
@@ -193,7 +199,12 @@ public class ScreenPanel extends JPanel {
                 copyBtn.setText("Copied");
                 copyToClipboard(result.getText());
             } else if (e.getSource() == clearBtn) {
-                input.setText("");
+                if (isFileMode) {
+                    fileTextField.setText("No file chosen");
+                    copyBtn.setVisible(false);
+                } else {
+                    input.setText("");
+                }
                 result.setText("");
             } else if (e.getSource() == encryptBtn) {
                 try {

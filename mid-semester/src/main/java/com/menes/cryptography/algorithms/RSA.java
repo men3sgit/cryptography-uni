@@ -1,13 +1,17 @@
 package com.menes.cryptography.algorithms;
 
+import com.menes.cryptography.utils.FileUtils;
+
 import javax.crypto.Cipher;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Base64;
 
 public class RSA {
-   private Key publicKey;
-   private  Key privateKey;
+    private Key publicKey;
+    private Key privateKey;
 
     public RSA() {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -34,6 +38,52 @@ public class RSA {
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] decryptedBytes = cipher.doFinal(cipherBytes);
         return new String(decryptedBytes);
+    }
+
+    public void encryptFile(String inputFile, Key publicKey) throws Exception {
+        try (FileInputStream inputStream = new FileInputStream(inputFile);
+             FileOutputStream outputStream = new FileOutputStream(
+                     FileUtils.appendFileName(inputFile,
+                             String.format("-enc-%d", System.currentTimeMillis())))) {
+
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+            byte[] inputBuffer = new byte[8];
+            int bytesRead;
+            byte[] outputBytes;
+            while ((bytesRead = inputStream.read(inputBuffer)) != -1) {
+                outputBytes = cipher.update(inputBuffer, 0, bytesRead);
+                if (outputBytes != null) {
+                    outputStream.write(outputBytes);
+                }
+            }
+            outputStream.flush();
+        }
+    }
+
+    public void decryptFile(String inputFile, Key privateKey) throws Exception {
+        try (FileInputStream inputStream = new FileInputStream(inputFile);
+             FileOutputStream outputStream = new FileOutputStream(
+                     FileUtils.appendFileName(inputFile,
+                             String.format("-dec-%d", System.currentTimeMillis())))) {
+
+
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+            byte[] inputBuffer = new byte[8];
+            int bytesRead;
+            byte[] outputBytes;
+            while ((bytesRead = inputStream.read(inputBuffer)) != -1) {
+                outputBytes = cipher.update(inputBuffer, 0, bytesRead);
+                if (outputBytes != null) {
+                    outputStream.write(outputBytes);
+                }
+            }
+            outputStream.flush();
+
+        }
     }
 
     public Key getPublicKey() {

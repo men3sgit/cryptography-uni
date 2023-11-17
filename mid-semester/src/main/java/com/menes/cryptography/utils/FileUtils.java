@@ -15,4 +15,12 @@ public class FileUtils {
             return isFile;
         });
     }
+
+    public static String appendFileName(String source, String append) {
+        return String.format("%s%s.%s", source.substring(0, source.lastIndexOf('.')), append, getExtension(source));
+    }
+
+    public static String getExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf('.') + 1);
+    }
 }

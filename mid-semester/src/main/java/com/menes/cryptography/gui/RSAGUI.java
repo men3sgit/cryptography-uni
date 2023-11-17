@@ -1,26 +1,35 @@
 package com.menes.cryptography.gui;
 
 import com.menes.cryptography.algorithms.RSA;
+import com.menes.cryptography.gui.custom.ScrollBar;
+import com.menes.cryptography.gui.panels.ScreenPanel;
 import com.menes.cryptography.utils.Common;
-import com.menes.cryptography.utils.MarginFactory;
+import com.menes.cryptography.gui.custom.MarginFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 import java.util.Base64;
+import java.util.Objects;
 
 public class RSAGUI implements AlgorithmGUI {
     private JComboBox<Integer> keySizeOption = new JComboBox<>(new Integer[]{1024, 2048, 4096});
     private JButton generateKeyButton;
     JScrollPane privateScrollPane, publicJScrollPane;
-    private JTextArea privateKey = new JTextArea(5, 30), publicKey = new JTextArea(5, 30);
+    private JTextArea privateKey, publicKey;
     private RSA rsa = new RSA();
-    JTextArea input, result;
+    private JTextArea input, result;
+    private ScreenPanel screenPanel;
 
-    public RSAGUI(JTextArea input, JTextArea result) {
-        this.result = result;
-        this.input = input;
+    public RSAGUI(ScreenPanel screenPanel) {
+        this.screenPanel = screenPanel;
+        this.result = screenPanel.getResult();
+        this.input = screenPanel.getInput();
+        int rows = screenPanel.isFileMode() ? 9 : 5;
+        privateKey = new JTextArea(rows, 30);
+        publicKey = new JTextArea(rows, 30);
     }
 
     @Override
@@ -84,7 +93,7 @@ public class RSAGUI implements AlgorithmGUI {
         panel.add(generateKeyButton = new JButton("Generate New Key Pair"));
         generateKeyButton.addActionListener(action -> {
             try {
-                rsa.generateKeyPair((Integer)keySizeOption.getSelectedItem());
+                rsa.generateKeyPair((Integer) keySizeOption.getSelectedItem());
                 privateKey.setText(Base64.getEncoder().encodeToString(rsa.getPrivateKey().getEncoded()));
                 publicKey.setText(Base64.getEncoder().encodeToString(rsa.getPublicKey().getEncoded()));
             } catch (Exception e) {
@@ -133,19 +142,44 @@ public class RSAGUI implements AlgorithmGUI {
 
     @Override
     public void encrypt() throws Exception {
+        result.setForeground(Color.BLACK);
+        if (screenPanel.isFileMode()) {
+            try {
+                long start = System.currentTimeMillis();
+                JFileChooser file = screenPanel.getFileChooser();
+                if (Objects.isNull(file)) {
+                    return;
+                }
+                rsa.encryptFile(file.getSelectedFile().getAbsolutePath(), rsa.getPublicKey());
+                result.setText("Encrypted file success in " + (System.currentTimeMillis() - start) + " ms");
+            } catch (Exception e) {
+                result.setForeground(Color.RED);
+                result.setText("Encrypted file failed: \n" + e.getMessage());
+            }
+            return;
+        }
+
         result.setText(rsa.encrypt(input.getText(), rsa.getPublicKey()));
     }
 
     @Override
     public void decrypt() throws Exception {
+        if (screenPanel.isFileMode()) {
+            try {
+                long start = System.currentTimeMillis();
+                JFileChooser file = screenPanel.getFileChooser();
+                if (Objects.isNull(file)) {
+                    return;
+                }
+                rsa.decryptFile(file.getSelectedFile().getAbsolutePath(), rsa.getPublicKey());
+                result.setText("Decrypted file success in " + (System.currentTimeMillis() - start) + " ms");
+            } catch (Exception e) {
+                result.setForeground(Color.RED);
+                result.setText("Decrypted file failed: \n" + e.getMessage());
+            }
+            return;
+        }
         result.setText(rsa.decrypt(input.getText(), rsa.getPrivateKey()));
     }
 
-//    public static void main(String[] args) {
-//        JFrame jframe = new JFrame();
-//        jframe.getContentPane().add(new RSAGUI().renderGUI());
-//        jframe.setVisible(true);
-//        jframe.pack();
-//        jframe.setLocationRelativeTo(null);
-//    }
 }
